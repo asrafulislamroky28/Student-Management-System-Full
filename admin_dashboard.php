@@ -98,7 +98,6 @@ $total_payments = ($payment_result && $row = $payment_result->fetch_row()) ? ($r
 
 <div class="sidebar">
     <h4>🎓 Admin Panel</h4>
-    <a href="admin_dashboard.php"><i class="fas fa-home me-2"></i>Dashboard</a>
     <a href="manage_students.php"><i class="fas fa-user-graduate me-2"></i>Manage Students</a>
     <a href="manage_teachers.php"><i class="fas fa-chalkboard-teacher me-2"></i>Manage Teachers</a>
     <a href="manage_class_routine.php"><i class="fas fa-calendar-alt me-2"></i>Manage Class Routine</a>
