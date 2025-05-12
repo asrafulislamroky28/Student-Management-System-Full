@@ -102,7 +102,7 @@ $total_payments = ($payment_result && $row = $payment_result->fetch_row()) ? ($r
     <a href="manage_teachers.php"><i class="fas fa-chalkboard-teacher me-2"></i>Manage Teachers</a>
     <a href="manage_class_routine.php"><i class="fas fa-calendar-alt me-2"></i>Manage Class Routine</a>
     <a href="manage_exam_routine.php"><i class="fas fa-calendar-alt me-2"></i>Manage Exam Routine</a>
-    <a href="manage_payment.php"><i class="fas fa-money-check-alt me-2"></i>Manage Payment</a>
+    <a href="admin_manage_payments.php"><i class="fas fa-money-check-alt me-2"></i>Manage Payment</a>
     <a href="about.php"><i class="fas fa-info-circle me-2"></i>About</a>
     <a href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
 </div>

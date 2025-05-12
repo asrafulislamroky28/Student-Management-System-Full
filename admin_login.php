@@ -18,7 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result->num_rows === 1) {
         $admin = $result->fetch_assoc();
         if (password_verify($password, $admin['password'])) {
-            $_SESSION['admin_username'] = $admin['username'];
+            // Set session variables upon successful login
+            $_SESSION['admin_logged_in'] = true;  // Set login status
+            $_SESSION['admin_username'] = $admin['username']; // Store username
+            
             header("Location: admin_dashboard.php");
             exit();
         } else {
@@ -116,7 +119,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <a href="student_login.php">Already registered? Login for student</a>
     </div>
     </form>
-    
-    
 </body>
 </html>

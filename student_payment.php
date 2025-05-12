@@ -9,6 +9,7 @@ if (!isset($_SESSION['student_id'])) {
 }
 
 $student_id = $_SESSION['student_id'];
+$student_name = $_SESSION['student_name'] ?? 'Student';
 
 // Handle payment update if Pay Now is clicked
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pay_now'])) {
@@ -89,6 +90,7 @@ $payment = $result->fetch_assoc();
             border: none;
             border-radius: 6px;
             cursor: pointer;
+            margin: 5px;
         }
         button:hover {
             background-color: #2980b9;
@@ -127,6 +129,8 @@ $payment = $result->fetch_assoc();
                         <button type="submit" name="pay_now">Pay Now</button>
                     </div>
                 </form>
+            <?php else: ?>
+                <button onclick="printPDF()">🧾 Download Receipt</button>
             <?php endif; ?>
         <?php else: ?>
             <p>No payment record found for your account.</p>
@@ -134,5 +138,92 @@ $payment = $result->fetch_assoc();
 
         <a class="back-link" href="student_dashboard.php">← Back to Dashboard</a>
     </div>
+
+    <script>
+    function printPDF() {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString();
+        const formattedTime = now.toLocaleTimeString();
+
+        const studentName = "<?php echo $student_name; ?>";
+        const studentID = "<?php echo $student_id; ?>";
+        const studentClass = "<?php echo $payment['class']; ?>";
+        const paymentAmount = "<?php echo number_format($payment['amount'], 2); ?>";
+
+        const htmlContent = `
+            <html>
+            <head>
+                <title>Payment Receipt</title>
+                <style>
+                    body {
+                        font-family: 'Poppins', sans-serif;
+                        padding: 40px;
+                        color: #2c3e50;
+                    }
+                    h1 {
+                        text-align: center;
+                        color: #27ae60;
+                        margin-bottom: 10px;
+                    }
+                    h3 {
+                        text-align: center;
+                        margin-top: 0;
+                    }
+                    .receipt-box {
+                        max-width: 700px;
+                        margin: auto;
+                        border: 1px solid #ccc;
+                        padding: 30px;
+                        border-radius: 10px;
+                        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                    }
+                    table {
+                        width: 100%;
+                        font-size: 16px;
+                        margin-top: 20px;
+                    }
+                    table td {
+                        padding: 8px 0;
+                    }
+                    .footer {
+                        margin-top: 40px;
+                        text-align: center;
+                        font-size: 14px;
+                        color: #888;
+                    }
+                    .status {
+                        color: green;
+                        font-weight: bold;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="receipt-box">
+                    <h1>Payment Receipt</h1>
+                    <h3>IUBAT Student Management System</h3>
+                    <table>
+                        <tr><td><strong>Student Name:</strong></td><td>${studentName}</td></tr>
+                        <tr><td><strong>Student ID:</strong></td><td>${studentID}</td></tr>
+                        <tr><td><strong>Class:</strong></td><td>${studentClass}</td></tr>
+                        <tr><td><strong>Amount Paid:</strong></td><td>৳${paymentAmount}</td></tr>
+                        <tr><td><strong>Status:</strong></td><td class="status">✅ Payment Completed</td></tr>
+                        <tr><td><strong>Date:</strong></td><td>${formattedDate}</td></tr>
+                        <tr><td><strong>Time:</strong></td><td>${formattedTime}</td></tr>
+                    </table>
+                    <div class="footer">
+                        This is a system-generated receipt. No signature required.
+                    </div>
+                </div>
+            </body>
+            </html>
+        `;
+
+        const newWin = window.open('', '', 'width=800,height=700');
+        newWin.document.write(htmlContent);
+        newWin.document.close();
+        newWin.focus();
+        newWin.print();
+    }
+    </script>
 </body>
 </html>
