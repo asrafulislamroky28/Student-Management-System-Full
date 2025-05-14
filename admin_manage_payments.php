@@ -18,6 +18,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_payment'])) {
     $stmt->execute();
 }
 
+// Handle amount update
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_amount'])) {
+    $student_id = $_POST['student_id'];
+    $new_amount = $_POST['new_amount'];
+
+    // Prepare SQL to update the payment amount
+    $stmt = $conn->prepare("UPDATE payments SET amount = ? WHERE student_id = ?");
+    $stmt->bind_param("di", $new_amount, $student_id);
+
+    // Execute the query
+    if ($stmt->execute()) {
+        echo "<script>alert('Amount updated successfully!');</script>";
+    } else {
+        echo "<script>alert('Error updating amount.');</script>";
+    }
+}
+
 // Fetch all payments
 $sql = "SELECT s.student_id, s.name, s.class, p.amount, p.status
         FROM students s
@@ -27,8 +44,10 @@ $result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Payments - Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -111,12 +130,40 @@ $result = $conn->query($sql);
             margin-bottom: 15px;
             float: right;
         }
+        .btn-edit {
+            background-color: #f39c12;
+            color: white;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="navbar">
         Admin Panel - Manage Payments
-        <a href="dashboard_admin.php">⬅ Back to Dashboard</a>
+        <a href="admin_dashboard.php">⬅ Back to Dashboard</a>
     </div>
 
     <div class="container">
@@ -154,6 +201,7 @@ $result = $conn->query($sql);
                                     Mark as <?php echo $row['status'] === 'Paid' ? 'Unpaid' : 'Paid'; ?>
                                 </button>
                             </form>
+                            <button class="btn-edit" onclick="openEditModal(<?php echo $row['student_id']; ?>, <?php echo $row['amount']; ?>)">Edit Amount</button>
                         </td>
                     </tr>
                 <?php endwhile; ?>
@@ -161,7 +209,30 @@ $result = $conn->query($sql);
         </table>
     </div>
 
+    <!-- Edit Amount Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Payment Amount</h3>
+            <form method="POST">
+                <input type="hidden" name="student_id" id="student_id">
+                <input type="number" name="new_amount" id="new_amount" placeholder="Enter new amount" required>
+                <button type="submit" name="update_amount" class="btn-paid">Update Amount</button>
+                <button type="button" onclick="closeEditModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
     <script>
+    function openEditModal(studentId, currentAmount) {
+        document.getElementById("student_id").value = studentId;
+        document.getElementById("new_amount").value = currentAmount;
+        document.getElementById("editModal").style.display = "flex";
+    }
+
+    function closeEditModal() {
+        document.getElementById("editModal").style.display = "none";
+    }
+
     function downloadPDF() {
         const table = document.getElementById("paymentTable").cloneNode(true);
 

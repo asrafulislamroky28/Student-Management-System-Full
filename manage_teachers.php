@@ -11,7 +11,6 @@ require 'db_connect.php';
 
 // Fetch the list of teachers from the database
 $teachers_result = $conn->query("SELECT * FROM teachers");
-
 ?>
 
 <!DOCTYPE html>
@@ -93,12 +92,12 @@ $teachers_result = $conn->query("SELECT * FROM teachers");
 
         .header-buttons {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             margin-bottom: 20px;
         }
 
         .header-buttons .btn {
-            margin-left: 10px;
+            margin-right: 10px;
         }
 
     </style>
@@ -122,10 +121,9 @@ $teachers_result = $conn->query("SELECT * FROM teachers");
         <p class="text-muted">Here’s a list of all the teachers in the system.</p>
     </div>
 
-    <!-- Header buttons for Add Teacher and PDF Download -->
+    <!-- Header button for Add Teacher only -->
     <div class="header-buttons">
         <a href="add_teacher.php" class="btn btn-success"><i class="fas fa-plus-circle me-2"></i>Add Teacher</a>
-        <a href="generate_teacher_pdf.php" class="btn btn-danger"><i class="fas fa-file-pdf me-2"></i>Download PDF</a>
     </div>
 
     <!-- Teachers Table -->
