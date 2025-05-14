@@ -151,7 +151,6 @@ if (!isset($_SESSION['student_id'])) {
         <h2>📚 Dashboard</h2>
         <ul>
             <li><a href="student_personal_info.php">📄 Personal Information</a></li>
-             <li><a href="teachers_info.php">📄 Personal Information</a></li>
             <li><a href="student_class_routine.php">📘 Class Routine</a></li>
             <li><a href="student_exam_routine.php">📝 Exam Routine</a></li>
             <li><a href="student_payment.php">💰 Payment Details</a></li>
