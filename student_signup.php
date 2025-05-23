@@ -11,6 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $section = $_POST['section'];
     $gender = $_POST['gender'];
     $dob = $_POST['dob'];
+    $due_ammount = 5000.00;
+    $status = "unpaid";
 
     $check = $conn->prepare("SELECT * FROM students WHERE student_id = ?");
     $check->bind_param("i", $student_id);
@@ -19,9 +21,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result->num_rows > 0) {
         $message = "Student ID already exists!";
+        header("Location: http://localhost/SMS/student_login.php");
+        exit();
     } else {
-        $stmt = $conn->prepare("INSERT INTO students (student_id, name, email, password, class, section, gender, date_of_birth) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("isssssss", $student_id, $name, $email, $password, $class, $section, $gender, $dob);
+        $stmt = $conn->prepare("INSERT INTO students (student_id, name, email, password, class, section, gender, date_of_birth, due_ammount, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("issssssdds", $student_id, $name, $email, $password, $class, $section, $gender, $dob, $due_ammount, $status);
         if ($stmt->execute()) {
             $message = "Registration successful!";
         } else {
@@ -33,6 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Student Sign Up</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
@@ -43,20 +48,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin: 0;
             padding: 0;
         }
+
         .container {
             width: 450px;
             background: white;
             padding: 30px;
             margin: 50px auto;
-            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
             border-radius: 10px;
         }
+
         h2 {
             text-align: center;
             margin-bottom: 25px;
             color: #333;
         }
-        input, select {
+
+        input,
+        select {
             width: 100%;
             padding: 10px;
             margin-top: 8px;
@@ -64,6 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border: 1px solid #ccc;
             border-radius: 8px;
         }
+
         input[type=submit] {
             background: #4CAF50;
             color: white;
@@ -71,14 +81,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-weight: 500;
             cursor: pointer;
         }
+
         input[type=submit]:hover {
             background: #45a049;
         }
+
         .message {
             color: red;
             text-align: center;
             margin-bottom: 10px;
         }
+
         a {
             display: block;
             text-align: center;
@@ -86,47 +99,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: #007bff;
             text-decoration: none;
         }
+
         a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <h2>Student Sign Up</h2>
-    <form method="POST">
-        <label>Student ID</label>
-        <input type="number" name="student_id" required>
+    <div class="container">
+        <h2>Student Sign Up</h2>
+        <form method="POST">
+            <label>Student ID</label>
+            <input type="number" name="student_id" required>
 
-        <label>Name</label>
-        <input type="text" name="name" required>
+            <label>Name</label>
+            <input type="text" name="name" required>
 
-        <label>Email</label>
-        <input type="email" name="email">
+            <label>Email</label>
+            <input type="email" name="email">
 
-        <label>Password</label>
-        <input type="password" name="password" required>
+            <label>Password</label>
+            <input type="password" name="password" required>
 
-        <label>Class</label>
-        <input type="text" name="class">
+            <label>Class</label>
+            <input type="text" name="class">
 
-        <label>Section</label>
-        <input type="text" name="section">
+            <label>Section</label>
+            <input type="text" name="section">
 
-        <label>Gender</label>
-        <select name="gender">
-            <option>Male</option>
-            <option>Female</option>
-        </select>
+            <label>Gender</label>
+            <select name="gender">
+                <option>Male</option>
+                <option>Female</option>
+            </select>
 
-        <label>Date of Birth</label>
-        <input type="date" name="dob">
+            <label>Date of Birth</label>
+            <input type="date" name="dob">
 
-        <input type="submit" value="Sign Up">
-    </form>
-    <div class="message"><?php echo $message; ?></div>
-    <a href="student_login.php">Already registered? Login for student</a>
-    <a href="admin_login.php">Already registered? Login for admin</a>
-</div>
+            <input type="submit" value="Sign Up">
+        </form>
+        <div class="message"><?php echo $message; ?></div>
+        <a href="student_login.php">Already registered? Login for student</a>
+        <a href="admin_login.php">Already registered? Login for admin</a>
+    </div>
 </body>
+
 </html>

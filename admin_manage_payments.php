@@ -13,13 +13,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_payment'])) {
     $student_id = $_POST['student_id'];
     $new_status = $_POST['new_status'];
     
-    $stmt = $conn->prepare("UPDATE payments SET status = ? WHERE student_id = ?");
+    $stmt = $conn->prepare("UPDATE students SET status = ? WHERE student_id = ?");
     $stmt->bind_param("si", $new_status, $student_id);
     $stmt->execute();
 }
 
 // Fetch all payments
-$sql = "SELECT s.student_id, s.name, s.class, p.amount, p.status
+$sql = "SELECT s.student_id, s.name, s.class, s.due_ammount, s.status
         FROM students s
         LEFT JOIN payments p ON s.student_id = p.student_id
         ORDER BY s.class, s.student_id";
@@ -116,7 +116,7 @@ $result = $conn->query($sql);
 <body>
     <div class="navbar">
         Admin Panel - Manage Payments
-        <a href="dashboard_admin.php">⬅ Back to Dashboard</a>
+        <a href="admin_dashboard.php">⬅ Back to Dashboard</a>
     </div>
 
     <div class="container">
@@ -140,18 +140,18 @@ $result = $conn->query($sql);
                         <td><?php echo htmlspecialchars($row['student_id']); ?></td>
                         <td><?php echo htmlspecialchars($row['name']); ?></td>
                         <td><?php echo htmlspecialchars($row['class']); ?></td>
-                        <td><?php echo number_format($row['amount'], 2); ?></td>
+                        <td><?php echo number_format($row['due_ammount'], 2); ?></td>
                         <td>
-                            <span class="<?php echo $row['status'] === 'Paid' ? 'status-paid' : 'status-unpaid'; ?>">
+                            <span class="<?php echo $row['status'] === 'paid' ? 'status-paid' : 'status-unpaid'; ?>">
                                 <?php echo $row['status'] ?? 'Unpaid'; ?>
                             </span>
                         </td>
                         <td>
                             <form method="POST" style="display:inline;">
                                 <input type="hidden" name="student_id" value="<?php echo $row['student_id']; ?>">
-                                <input type="hidden" name="new_status" value="<?php echo $row['status'] === 'Paid' ? 'Unpaid' : 'Paid'; ?>">
+                                <input type="hidden" name="new_status" value="<?php echo $row['status'] === 'paid' ? 'unpaid' : 'paid'; ?>">
                                 <button type="submit" name="update_payment" class="<?php echo $row['status'] === 'Paid' ? 'btn-unpaid' : 'btn-paid'; ?>">
-                                    Mark as <?php echo $row['status'] === 'Paid' ? 'Unpaid' : 'Paid'; ?>
+                                    Mark as <?php echo $row['status'] === 'paid' ? 'unpaid' : 'paid'; ?>
                                 </button>
                             </form>
                         </td>

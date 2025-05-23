@@ -4,7 +4,6 @@ require 'db_connect.php';
 
 // Fetch all students
 $result = $conn->query("SELECT * FROM students");
-
 ?>
 
 <!DOCTYPE html>
@@ -12,30 +11,96 @@ $result = $conn->query("SELECT * FROM students");
 <head>
     <title>Manage Students</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         body {
             background: #f0f2f5;
             font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
         }
-        .container {
-            margin-top: 50px;
+
+        .sidebar {
+            height: 100vh;
+            background-color: #2c3e50;
+            padding: 30px 20px;
+            color: white;
+            position: fixed;
+            width: 250px;
         }
+
+        .sidebar h4 {
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .sidebar a {
+            color: #ecf0f1;
+            display: block;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .sidebar a:hover {
+            background-color: #34495e;
+        }
+
+        .content {
+            margin-left: 270px;
+            padding: 40px;
+        }
+
         .card {
             border-radius: 12px;
             box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            padding: 20px;
+            background: white;
         }
+
+        .table thead {
+            background-color: #343a40;
+            color: white;
+        }
+
         .modal input {
             margin-bottom: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="card p-4">
+<div class="sidebar">
+    <h4>🎓 Admin Panel</h4>
+    <a href="manage_students.php"><i class="fas fa-user-graduate me-2"></i>Manage Students</a>
+    <a href="manage_teachers.php"><i class="fas fa-chalkboard-teacher me-2"></i>Manage Teachers</a>
+    <a href="manage_class_routine.php"><i class="fas fa-calendar-alt me-2"></i>Manage Class Routine</a>
+    <a href="manage_exam_routine.php"><i class="fas fa-calendar-alt me-2"></i>Manage Exam Routine</a>
+    <a href="admin_manage_payments.php"><i class="fas fa-money-check-alt me-2"></i>Manage Payment</a>
+    <a href="about.php"><i class="fas fa-info-circle me-2"></i>About</a>
+    <a href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+</div>
+
+<div class="content">
+    <div class="card">
         <h3 class="mb-4">Manage Students</h3>
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
+        <table class="table table-bordered table-hover">
+            <thead>
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
@@ -45,24 +110,28 @@ $result = $conn->query("SELECT * FROM students");
                 </tr>
             </thead>
             <tbody>
-            <?php while($row = $result->fetch_assoc()): ?>
-                <tr>
-                    <td><?= $row['student_id']; ?></td>
-                    <td><?= $row['name']; ?></td>
-                    <td><?= $row['email']; ?></td>
-                    <td><?= $row['class']; ?></td>
-                    <td>
-                        <button class="btn btn-primary btn-sm editBtn" 
-                            data-id="<?= $row['student_id']; ?>" 
-                            data-name="<?= $row['name']; ?>" 
-                            data-email="<?= $row['email']; ?>" 
-                            data-class="<?= $row['class']; ?>">
-                            Edit
-                        </button>
-                        <a href="delete_student.php?id=<?= $row['student_id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure to delete this student?')">Delete</a>
-                    </td>
-                </tr>
-            <?php endwhile; ?>
+                <?php while($row = $result->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= $row['student_id']; ?></td>
+                        <td><?= $row['name']; ?></td>
+                        <td><?= $row['email']; ?></td>
+                        <td><?= $row['class']; ?></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary editBtn" 
+                                    data-id="<?= $row['student_id']; ?>" 
+                                    data-name="<?= $row['name']; ?>" 
+                                    data-email="<?= $row['email']; ?>" 
+                                    data-class="<?= $row['class']; ?>">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <a href="delete_student.php?id=<?= $row['student_id']; ?>" 
+                               class="btn btn-sm btn-outline-danger" 
+                               onclick="return confirm('Are you sure to delete this student?')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
             </tbody>
         </table>
     </div>

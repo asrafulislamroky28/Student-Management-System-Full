@@ -11,15 +11,15 @@ if (!isset($_SESSION['student_id'])) {
 $student_id = $_SESSION['student_id'];
 $student_name = $_SESSION['student_name'] ?? 'Student';
 
-// Handle payment update if Pay Now is clicked
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pay_now'])) {
-    $update = $conn->prepare("UPDATE payments SET status = 'Paid' WHERE student_id = ?");
-    $update->bind_param("i", $student_id);
-    $update->execute();
-}
+// // Handle payment update if Pay Now is clicked
+// if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pay_now'])) {
+//     $update = $conn->prepare("UPDATE students SET status = 'paid' WHERE student_id = ?");
+//     $update->bind_param("i", $student_id);
+//     $update->execute();
+// }
 
 // Fetch payment info for this student
-$stmt = $conn->prepare("SELECT class, amount, status FROM payments WHERE student_id = ?");
+$stmt = $conn->prepare("SELECT class, due_ammount, status FROM students WHERE student_id = ?");
 $stmt->bind_param("i", $student_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -75,7 +75,7 @@ $payment = $result->fetch_assoc();
             background-color: #2ecc71;
             color: white;
         }
-        .Unpaid {
+        .unpaid, .Unpaid {
             background-color: #e74c3c;
             color: white;
         }
@@ -116,24 +116,22 @@ $payment = $result->fetch_assoc();
         <?php if ($payment): ?>
             <div class="info">
                 <strong>Class:</strong> <?php echo htmlspecialchars($payment['class']); ?><br>
-                <strong>Amount:</strong> ৳<?php echo number_format($payment['amount'], 2); ?><br>
+                <strong>Amount:</strong> ৳<?php echo number_format($payment['due_ammount'], 2); ?><br>
                 <strong>Status:</strong>
-                <span class="status <?php echo $payment['status']; ?>">
-                    <?php echo $payment['status']; ?>
+                <span class="status <?php echo htmlspecialchars($payment['status']); ?>">
+                    <?php echo htmlspecialchars($payment['status']); ?>
                 </span>
             </div>
 
-            <?php if ($payment['status'] !== 'Paid'): ?>
-                <form method="POST">
-                    <div class="pay-btn">
-                        <button type="submit" name="pay_now">Pay Now</button>
-                    </div>
+            <!-- <?php if (strtolower($payment['status']) === 'unpaid'): ?>
+                <form method="POST" class="pay-btn">
+                    <button type="submit" name="pay_now">💳 Pay Now</button>
                 </form>
-            <?php else: ?>
+            <?php endif; ?> -->
+
+            <?php if (strtolower($payment['status']) === 'paid'): ?>
                 <button onclick="printPDF()">🧾 Download Receipt</button>
             <?php endif; ?>
-        <?php else: ?>
-            <p>No payment record found for your account.</p>
         <?php endif; ?>
 
         <a class="back-link" href="student_dashboard.php">← Back to Dashboard</a>
@@ -145,10 +143,10 @@ $payment = $result->fetch_assoc();
         const formattedDate = now.toLocaleDateString();
         const formattedTime = now.toLocaleTimeString();
 
-        const studentName = "<?php echo $student_name; ?>";
+        const studentName = "<?php echo addslashes($student_name); ?>";
         const studentID = "<?php echo $student_id; ?>";
-        const studentClass = "<?php echo $payment['class']; ?>";
-        const paymentAmount = "<?php echo number_format($payment['amount'], 2); ?>";
+        const studentClass = "<?php echo addslashes($payment['class']); ?>";
+        const paymentAmount = "<?php echo number_format($payment['due_ammount'], 2); ?>";
 
         const htmlContent = `
             <html>

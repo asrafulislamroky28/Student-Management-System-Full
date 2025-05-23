@@ -1,9 +1,10 @@
 <?php
-require 'db_connect.php';
 session_start();
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    require 'db_connect.php';
+
     $student_id = intval($_POST['student_id']);
     $password = $_POST['password'];
 
@@ -14,8 +15,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($row = $result->fetch_assoc()) {
         if (password_verify($password, $row['password'])) {
-            $_SESSION['student_id'] = $student_id;
-            $_SESSION['name'] = $row['name'];
+            $_SESSION['student_username'] = $row['username']; // Store the username
+            $_SESSION['student_id'] = $row['student_id'];  // Store the student ID
+            $_SESSION['name'] = $row['name'];  // Store the student's name
             header("Location: student_dashboard.php");
             exit();
         } else {
@@ -28,8 +30,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
     <style>
@@ -97,7 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="submit" value="Login">
     </form>
     <div class="message"><?php echo $message; ?></div>
-    <a href="student_signup.php">Don't have an account? Sign up</a> <a href="admin_login.php">Already registered? Login admin</a>
+    <a href="student_signup.php">Don't have an account? Sign up</a> <a href="admin_login.php">Login as Admin</a>
 </div>
 </body>
 </html>

@@ -16,7 +16,7 @@ $total_teachers_result = $conn->query("SELECT COUNT(*) FROM teachers");
 $total_teachers = ($total_teachers_result && $row = $total_teachers_result->fetch_row()) ? $row[0] : 0;
 
 // Get total payments
-$payment_result = $conn->query("SELECT SUM(amount) FROM payments WHERE status='Paid'");
+$payment_result = $conn->query("SELECT SUM(due_ammount) FROM students WHERE status='paid'");
 $total_payments = ($payment_result && $row = $payment_result->fetch_row()) ? ($row[0] ?? 0.00) : 0.00;
 ?>
 

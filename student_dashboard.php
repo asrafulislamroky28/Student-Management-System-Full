@@ -9,6 +9,7 @@ if (!isset($_SESSION['student_id'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -21,9 +22,9 @@ if (!isset($_SESSION['student_id'])) {
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f4f6f9;
-            transition: margin-left 0.3s ease;
         }
 
+        /* Sidebar styles */
         .menu-toggle {
             position: fixed;
             top: 20px;
@@ -45,24 +46,20 @@ if (!isset($_SESSION['student_id'])) {
             transition: all 0.3s ease;
         }
 
-        .menu-toggle:hover .bar {
-            background-color: #1abc9c;
-        }
-
         .sidebar {
             height: 100%;
             width: 250px;
             background-color: #2c3e50;
             position: fixed;
             top: 0;
-            left: -250px;
+            left: -250px; /* Sidebar initially hidden offscreen */
             padding-top: 60px;
             transition: all 0.3s ease;
             z-index: 1000;
         }
 
         .sidebar.open {
-            left: 0;
+            left: 0; /* Sidebar slides in */
         }
 
         .sidebar h2 {
@@ -90,9 +87,9 @@ if (!isset($_SESSION['student_id'])) {
 
         .sidebar ul li a:hover {
             background-color: #1abc9c;
-            border-radius: 5px;
         }
 
+        /* Dashboard Styles */
         .dashboard {
             max-width: 900px;
             margin: 100px auto;
@@ -118,23 +115,38 @@ if (!isset($_SESSION['student_id'])) {
             padding: 10px 16px;
             border-radius: 5px;
             cursor: pointer;
-            font-weight: 500;
-            text-decoration: none;
         }
 
-        .logout-btn:hover {
-            background-color: #c0392b;
+        /* Mobile view for smaller screens */
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -250px;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .dashboard {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- Sidebar Toggle Button -->
     <div class="menu-toggle" onclick="toggleSidebar()">
         <div class="bar"></div>
         <div class="bar"></div>
         <div class="bar"></div>
     </div>
 
+    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <h2>📚 Dashboard</h2>
         <ul>
@@ -146,13 +158,16 @@ if (!isset($_SESSION['student_id'])) {
         </ul>
     </div>
 
+    <!-- Logout Button -->
     <a class="logout-btn" href="logout.php">Logout</a>
 
+    <!-- Dashboard Content -->
     <div class="dashboard">
         <h2>Welcome, <?php echo htmlspecialchars($_SESSION['name']); ?></h2>
         <p style="text-align:center; color:#666;">Use the sidebar menu to navigate your student services.</p>
     </div>
 
+    <!-- JavaScript to Toggle Sidebar -->
     <script>
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
